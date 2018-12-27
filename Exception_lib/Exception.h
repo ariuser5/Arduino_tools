@@ -3,33 +3,33 @@
 
 #include "Arduino.h"
 
-class Exception_h
+typedef enum ExceptionType {
+	NotImplementedException,
+	IndexOutOfRangeException,
+	OverflowException,
+	ArgumentException,
+	ArgumetNullException,
+	ArgumentOutOfRangeException,
+	TimeoutException,
+	NewException
+};	
+
+class Exception
 {
-	typedef enum ExceptionType{
-		NotImplementedException,
-		IndexOutOfRangeException,
-		OverflowException,
-		ArgumentException,
-		ArgumetNullException,
-		ArgumentOutOfRangeException,
-		TimeoutException,
-		NewException
-	};	
-	
 	public:
 		Exception();
-		Exception(char*);
+		Exception(String);
 		Exception(ExceptionType);
 		
 		void Invoke();
 		
-		void SetMessage(char*);
-		char* GetMessage();
+		void SetMessage(String);
+		String GetMessage();
 	
 	private:
 		bool _writable;
-		char _message[32];
+		String _message;
 		ExceptionType _type;
-}
+};
 
 #endif
