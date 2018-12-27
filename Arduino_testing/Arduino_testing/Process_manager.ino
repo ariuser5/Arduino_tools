@@ -1,34 +1,47 @@
 ﻿
-
 enum RunningState { PowerOff, Starting, OnCountdown, ShutingDown, Running };
 
-const int _restartCooldown = 5000;
+const int _restartCountdown = 200;
 
 int trackPin = 2;
 int powerPin = 3;
 
 int countRestartCountdown = 0;
 
-boolean inversePowerBtn = true;
+boolean inversePowerBtn = false;
 
-void(*work)() = []() {};
+void(*work)() = &idle;
 RunningState processState = PowerOff;
+
+//
+//A button stabilized position must be implemented
+//
 
 boolean powerTrigger() {
 	if (inversePowerBtn == true)
-	if (digitalRead(trackPin) == LOW) return true;
-	else return false;
-	else if (digitalRead(trackPin) == LOW) return false;
-	else return true;
+		return (digitalRead(trackPin) == LOW) ? true : false;
+	else return (digitalRead(trackPin) == LOW) ? false : true;
+}
+
+void idle() {
+	Serial.println("Idling");
 }
 
 void countdown() {
-	countRestartCountdown++;
 	processState = OnCountdown;
+
+	if (countRestartCountdown >= _restartCountdown) {
+		processState = PowerOff;
+		work = &idle;
+	}
+
+	countRestartCountdown++;
+	Serial.print("count: ");
+	Serial.println(countRestartCountdown);
 }
 
 void boot() {
-	if (countRestartCountdown < _restartCooldown) processState = OnCountdown;
+	if (countRestartCountdown < _restartCountdown) processState = OnCountdown;
 	else processState = Starting;
 }
 
@@ -37,10 +50,12 @@ void initProcess() {
 }
 
 void running() {
-	Serial.println("***");
+	digitalWrite(powerPin, HIGH);
+	Serial.println(powerTrigger());
 }
 
 void shutDown() {
+	digitalWrite(powerPin, LOW);
 	processState = ShutingDown;
 }
 
@@ -49,7 +64,9 @@ void setup() {
 
 	pinMode(trackPin, INPUT);
 	pinMode(powerPin, OUTPUT);
-	work = []() {};
+
+	countRestartCountdown = _restartCountdown;
+	work = &idle;
 
 	if (powerTrigger() == true) {
 		processState = Starting;
@@ -64,26 +81,22 @@ void loop() {
 	work();
 
 	switch (processState) {
-		case PowerOff: 
-			if (powerTrigger() == true) work = &boot;
-			break;
-		case Starting:
-			work = &initProcess;
-			break;
-		case OnCountdown:
-			if (countRestartCountdown >= _restartCooldown) {
-				processState = PowerOff;
-			} else work = &countdown;
-			break;
-		case ShutingDown:
-			countRestartCountdown = 0;
-			work = &countdown;
-			break;
-		case Running:
-			if (powerTrigger() == false) work = &shutDown;
-			else work = &running;
-			break;
+	case PowerOff:
+		if (powerTrigger() == true) work = &boot;
+		break;
+	case Starting:
+		work = &initProcess;
+		break;
+	case OnCountdown:
+		work = &countdown;
+		break;
+	case ShutingDown:
+		countRestartCountdown = 0;
+		work = &countdown;
+		break;
+	case Running:
+		if (powerTrigger() == false) work = &shutDown;
+		else work = &running;
+		break;
 	}
-
-	Serial.println("Process: " + processState);
 }

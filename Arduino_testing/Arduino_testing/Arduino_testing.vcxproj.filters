@@ -16,6 +16,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Arduino_testing.ino" />
+    <None Include="Process_manager.ino" />
   </ItemGroup>
- 
+  <ItemGroup>
+    <ClInclude Include="__vm\.Arduino_testing.vsarduino.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>
