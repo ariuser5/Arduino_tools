@@ -8,11 +8,13 @@
 #ifndef _Exception_h
 #define _Exception_h
 
-#if defined(ARDUINO) && ARDUINO >= 100
-	#include "arduino.h"
-#else
-	#include "WProgram.h"
-#endif
+#include "Arduino.h"
+
+// #if defined(ARDUINO) && ARDUINO >= 100
+// 	#include "Arduino.h"
+// #else
+// 	#include "WProgram.h"
+// #endif
 
 typedef enum ExceptionType {
 	NotImplementedException,
@@ -25,26 +27,22 @@ typedef enum ExceptionType {
 	NewException
 };
 
-namespace {
-
-}
-
 class Exception
 {
-public:
-	Exception();
-	Exception(String);
-	Exception(ExceptionType);
+    public:
+        Exception();
+        Exception(String);
+        Exception(ExceptionType);
 
-	void Invoke();
+        void Invoke();
 
-	void SetMessage(String);
-	String GetMessage();
+        void SetMessage(String);
+        String GetMessage();
 
-private:
-	bool _writable;
-	String _message;
-	ExceptionType _type;
+    private:
+        bool _writable;
+        String _message;
+        ExceptionType _type;
 };
 
 #endif
