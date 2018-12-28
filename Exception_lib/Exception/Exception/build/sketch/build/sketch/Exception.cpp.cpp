@@ -1,3 +1,6 @@
+#include <Arduino.h>
+#line 1 "e:\\SourceTree_Projects\\Arduino\\Arduino_tools\\Exception_lib\\Exception\\Exception\\Exception.cpp"
+#line 1 "e:\\SourceTree_Projects\\Arduino\\Arduino_tools\\Exception_lib\\Exception\\Exception\\Exception.cpp"
 /*
  Name:		Exception.cpp
  Created:	12/28/2018 1:17:48 AM
@@ -94,3 +97,20 @@ String Exception::GetMessage()
 {
 	return _message;
 }
+
+#line 1 "e:\\SourceTree_Projects\\Arduino\\Arduino_tools\\Exception_lib\\Exception\\Exception\\ExceptionTest.ino"
+#include <Exception.h>
+
+Exception myException(Exception::ExceptionType::NotImplementedException);
+
+void setup() {
+  // put your setup code here, to run once:
+  Serial.begin(9600);
+  Serial.println(myException.GetMessage());
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  
+}
+
