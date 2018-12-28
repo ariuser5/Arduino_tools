@@ -6,6 +6,19 @@
 */
 
 #include "Exception.h"
+#include <Arduino.h>
+
+void Exception::_defaultBehaviour()
+{
+	//Temp
+	Serial.println("An exception has occured");
+	delay(1000);
+}
+
+void Exception::SetBehaviour(void (*f)())
+{
+	_behave = f;
+}
 
 Exception::Exception()
 {
@@ -56,9 +69,7 @@ Exception::Exception(ExceptionType exType)
 
 void Exception::Invoke()
 {
-	//throw this onto a universal standard class that receives and manages exceptions
-	//This will be called whenever a exception call is being made
-	//substitute for "Throw New Exception"
+	_behave();
 }
 
 void Exception::SetMessage(String message)

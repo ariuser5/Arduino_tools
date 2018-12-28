@@ -30,6 +30,8 @@ typedef enum ExceptionType {
 class Exception
 {
     public:
+        static void SetBehaviour(void(*f)());
+
         Exception();
         Exception(String);
         Exception(ExceptionType);
@@ -40,6 +42,9 @@ class Exception
         String GetMessage();
 
     private:
+        static void (*_behave)();
+        static void _defaultBehaviour();
+
         bool _writable;
         String _message;
         ExceptionType _type;
