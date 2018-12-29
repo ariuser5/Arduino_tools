@@ -287,7 +287,5 @@ boards.local.txt
 *.a
 *.d
 *.cpp.cpp
-/Build/
-/build/
-/Sketch/
-/sketch/
+Build/
+build/

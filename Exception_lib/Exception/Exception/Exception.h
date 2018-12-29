@@ -16,47 +16,62 @@
 // 	#include "WProgram.h"
 // #endif
 
-class Exception
-{
-    public:
-        static enum _exceptionType {
-            NotImplementedException,
-            IndexOutOfRangeException,
-            OverflowException,
-            ArgumentException,
-            ArgumetNullException,
-            ArgumentOutOfRangeException,
-            TimeoutException,
-            NewException
+namespace ExceptionScope {
+
+    namespace Shared {
+
+        struct ExceptionTypeStruct {
+
+            enum exceptionType {
+                NotImplementedException,
+                IndexOutOfRangeException,
+                OverflowException,
+                ArgumentException,
+                ArgumetNullException,
+                ArgumentOutOfRangeException,
+                TimeoutException,
+                NewException
+            };
         };
 
-        typedef _exceptionType ExceptionType;
-        
-        //Those should be hidden(private)
-        static void (*_behave)();
-        static void _defaultBehaviour();
-        static bool _initialized;
+        typedef ExceptionTypeStruct::exceptionType ExceptionType;
+    }
+    
+    typedef Shared::ExceptionTypeStruct::exceptionType ExceptionType;
+    typedef Shared::ExceptionTypeStruct ExceptionEnum;
 
-        //This is public static
-        static void SetBehaviour(void(*)());
+    class Exception
+    {
+        public:
+            //Those should be hidden(private)
+            static void (*_callback)();
+            static void _defaultBehaviour();
+            static bool _initialized;
 
-        Exception();
-        Exception(String);
-        Exception(_exceptionType);
+            //This is public static
+            static void SetBehaviour(void (*)());
 
-        void Invoke();
+            Exception();
+            Exception(String);
+            Exception(ExceptionType);
 
-        void SetMessage(String);
-        String GetMessage();
+            void Invoke();
 
-    private:
-        bool _writable;
-        String _message;
-        _exceptionType _type;
-};
+            void SetMessage(String);
+            String GetMessage();
 
-//using Exception::ExceptionType
-//typedef Exception::ExceptionType ExceptionType;
+            //SharedMembers* sharedMembers;
+
+            typedef Shared::ExceptionTypeStruct ExceptionEnum; 
+
+        private:
+            bool _writable;
+            String _message;
+            ExceptionType _type;
+    };
+}
+
+typedef ExceptionScope::Exception Exception;
 
 #endif
 

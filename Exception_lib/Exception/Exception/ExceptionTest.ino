@@ -1,6 +1,6 @@
 #include <Exception.h>
 
-Exception myException(Exception::ExceptionType::NotImplementedException);
+Exception myException(Exception::ExceptionEnum::NotImplementedException);
 
 void setup() {
   // put your setup code here, to run once:

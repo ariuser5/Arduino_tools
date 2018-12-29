@@ -7,90 +7,97 @@
 
 #include "Exception.h"
 
-void _defaultBehaviour()
-{
-	//Temp
-	Serial.println("An exception has occured");
-	delay(1000);
-}
+namespace ExceptionScope {
+	typedef Exception base;
 
-void Exception::SetBehaviour(void (*f)())
-{
-	if(_initialized == false){
-		_initialized = true;
+	bool base::_initialized = false;
+    void (*base::_callback)() = base::_defaultBehaviour;
+
+	void base::_defaultBehaviour()
+	{
+		//Temp
+		Serial.println("An exception has occured");
+		delay(1000);
 	}
 
-	_behave = f;
-}
+	void base::SetBehaviour(void (*f)())
+	{
+		if(_initialized == false){
+			_initialized = true;
+		}
 
-Exception::Exception()
-{
-	_writable = true;
-	_message = "";
-	_type = NewException;
-}
+		_callback = f;
+	}
 
-Exception::Exception(String message)
-{
-	_writable = true;
-	_message = message;
-	_type = NewException;
-}
-
-Exception::Exception(ExceptionType exType)
-{
-	_writable = false;
-	_type = exType;
-
-	switch (_type) {
-	case NotImplementedException:
-		_message = "The Method or Property is not implemented";
-		break;
-	case IndexOutOfRangeException:
-		_message = "The index is out of range";
-		break;
-	case OverflowException:
-		_message = "Exceeded array capacity";
-		break;
-	case ArgumentException:
-		_message = "Invalid argument ";
-		break;
-	case ArgumetNullException:
-		_message = "One or more function arguments are null";
-		break;
-	case ArgumentOutOfRangeException:
-		_message = "Number of arguments does not match with the one of the intended function";
-		break;
-	case TimeoutException:
-		_message = "Timeout exception occured";
-		break;
-	case NewException:
+	base::Exception()
+	{
+		_writable = true;
 		_message = "";
-		break;
-	}
-}
-
-void Exception::Invoke()
-{
-	if(Exception::_initialized == false){
-		Exception::_behave = _defaultBehaviour;
-		Exception::_initialized = true;
+		_type = ExceptionEnum::NewException;
 	}
 
-	_behave();
-}
-
-void Exception::SetMessage(String message)
-{
-	if (_writable == true) {
+	base::Exception(String message)
+	{
+		_writable = true;
 		_message = message;
+		_type = ExceptionEnum::NewException;
 	}
-	else {
-		return;
-	}
-}
 
-String Exception::GetMessage()
-{
-	return _message;
+	base::Exception(ExceptionType exType)
+	{
+		_writable = false;
+		_type = exType;
+
+		switch (_type) {
+		case ExceptionEnum::NotImplementedException:
+			_message = "The Method or Property is not implemented";
+			break;
+		case ExceptionEnum::IndexOutOfRangeException:
+			_message = "The index is out of range";
+			break;
+		case ExceptionEnum::OverflowException:
+			_message = "Exceeded array capacity";
+			break;
+		case ExceptionEnum::ArgumentException:
+			_message = "Invalid argument ";
+			break;
+		case ExceptionEnum::ArgumetNullException:
+			_message = "One or more function arguments are null";
+			break;
+		case ExceptionEnum::ArgumentOutOfRangeException:
+			_message = "Number of arguments does not match with the one of the intended function";
+			break;
+		case ExceptionEnum::TimeoutException:
+			_message = "Timeout exception occurred";
+			break;
+		case ExceptionEnum::NewException:
+			_message = "";
+			break;
+		}
+	}
+
+	void base::Invoke()
+	{
+		if(_initialized == false){
+			_callback = _defaultBehaviour;
+			_initialized = true;
+		}
+
+		_callback();
+	}
+
+	void base::SetMessage(String message)
+	{
+		if (_writable == true) {
+			_message = message;
+		}
+		else {
+			return;
+		}
+	}
+
+	String base::GetMessage()
+	{
+		return _message;
+	}
 }
