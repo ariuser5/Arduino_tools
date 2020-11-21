@@ -1,0 +1,27 @@
+#######################################
+# Syntax Coloring Map PreampInterrupts
+#######################################
+
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+RotaryEncoder	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+setOutputPins	KEYWORD2
+setAPin		KEYWORD2
+setBPin		KEYWORD2
+setDebounceDelay    KEYWORD2
+readRawSignal   KEYWORD2   
+readSignal	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+ROTENC_DEFAULT_DEBOUNCE_DELLAY  LITERAL1
