@@ -20,15 +20,12 @@ class RotaryEncoder
         void setOutputPins(int outputA, int outputB);
         void setAPin(int pinNumber);
         void setBPin(int pinNumber);
-        void setDebounceDelay(unsigned int value);
-        int8_t readRawSignal();
-        int8_t readSignal(unsigned long millis);
+        int8_t readSignal();
     private:
-        unsigned int _lastDebounceTime;
-        unsigned short _debounceDelay;
         uint16_t _outputA;
         uint16_t _outputB;
-        int8_t _aLastState;
+        int8_t _lastState;
+        int8_t _tState;
 };
 
 #endif

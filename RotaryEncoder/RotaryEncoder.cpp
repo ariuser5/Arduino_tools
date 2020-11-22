@@ -10,16 +10,15 @@
 RotaryEncoder::RotaryEncoder()
 {
     this->setOutputPins(-1, -1);
-    this->_debounceDelay = ROTENC_DEFAULT_DEBOUNCE_DELLAY;
-    this->_lastDebounceTime = 0;
-    this->_aLastState = LOW;
+    this->_lastState = LOW;
+    this->_tState = 2;
 }
 
 RotaryEncoder::RotaryEncoder(int outputA, int outputB) :
     RotaryEncoder()
 {
     this->setOutputPins(outputA, outputB);
-    this->_aLastState = digitalRead(outputA);
+    this->_lastState = digitalRead(outputA);
 }
 
 void RotaryEncoder::setOutputPins(int outputA, int outputB)
@@ -31,40 +30,37 @@ void RotaryEncoder::setOutputPins(int outputA, int outputB)
 void RotaryEncoder::setAPin(int pinNumber)
 {
     this->_outputA = pinNumber;
+    pinMode(pinNumber, INPUT);
 }
 
 void RotaryEncoder::setBPin(int pinNumber)
 {
     this->_outputB = pinNumber;
+    pinMode(pinNumber, INPUT);  
 }
 
-void RotaryEncoder::setDebounceDelay(unsigned int value)
-{
-    this->_debounceDelay = value;
-}
-
-int8_t RotaryEncoder::readRawSignal()
+int8_t RotaryEncoder::readSignal()
 {
     int aState = digitalRead(this->_outputA);
-    int retVal = 0;
+    int bState = digitalRead(this->_outputB);
 
-    if(aState != this->_aLastState){
-        int bState = digitalRead(this->_outputB);
+    if(aState != bState){
+        if(this->_tState == 2){
 
-        retVal = (aState != bState) ? 1 : -1;
-    }
+            if(aState != this->_lastState){
+                this->_tState = aState;
+                return 1;
+            } else if(bState != this->_lastState){
+                this->_tState = bState;
+                return -1;
+            }
 
-    this->_aLastState = aState;
-    return retVal;
-}
-
-int8_t RotaryEncoder::readSignal(unsigned long millis)
-{
-    if( (millis - this->_lastDebounceTime) > 
-        this->_debounceDelay) 
+        }
+    } else if(aState == this->_tState && 
+              bState == this->_tState) 
     {
-        this->_lastDebounceTime = millis;
-        return this->readRawSignal(); 
+        this->_lastState = this->_tState;
+        this->_tState = 2;
     }
 
     return 0;
